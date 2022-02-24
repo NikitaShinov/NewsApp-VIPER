@@ -17,9 +17,15 @@ protocol AnyPresenter {
     var view: AnyView? { get set }
     
     func interactorDidFetchUsers(with result: Result<[Article], Error>)
+//    func interactorDidFetchImage(with data: Data?, for indexPath: IndexPath)
 }
 
 class UserPresenter: AnyPresenter {
+    
+    
+    
+    
+    
     var router: AnyRouter?
     
     var interactor: AnyInteractor? {
@@ -29,9 +35,7 @@ class UserPresenter: AnyPresenter {
     }
     
     var view: AnyView?
-    
 
-    
     func interactorDidFetchUsers(with result: Result<[Article], Error>) {
         switch result {
         case .success(let users):
@@ -40,4 +44,9 @@ class UserPresenter: AnyPresenter {
             view?.update(with: "Something went wrong")
         }
     }
+    
+//    func interactorDidFetchImage(with data: Data?, for indexPath: IndexPath) {
+//        guard let data = data else { return }
+//
+//    }
 }

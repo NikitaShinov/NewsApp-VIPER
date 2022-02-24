@@ -23,7 +23,7 @@ class UserViewController: UIViewController, AnyView, UITableViewDelegate, UITabl
     
     private let tableView: UITableView = {
         let tableview = UITableView()
-        tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableview.register(NewsTableViewCell.self, forCellReuseIdentifier: NewsTableViewCell.identifier)
         tableview.isHidden = true
         return tableview
     }()
@@ -71,15 +71,36 @@ class UserViewController: UIViewController, AnyView, UITableViewDelegate, UITabl
         }
     }
     //MARK: - TableView
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = users[indexPath.row].title
-        return cell
-    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         users.count
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        200
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsTableViewCell.identifier, for: indexPath) as? NewsTableViewCell else { fatalError()}
+        cell.title.text = users[indexPath.row].title
+        cell.subtitle.text = users[indexPath.row].description
+        if let image = getImage(from: users[indexPath.row].urlToImage) {
+            cell.newsImage.image = UIImage(data: image)
+        }
+        cell.counterLabel.text = (String(describing: users[indexPath.row].countOfViews))
+        
+        
+        
+        return cell
+    }
+}
+
+extension UserViewController {
+    
+    private func getImage(from url: URL?) -> Data? {
+        guard let url = url else { return nil }
+        guard let imageData = try? Data(contentsOf: url) else { return nil }
+        return imageData
+    }
     
 }

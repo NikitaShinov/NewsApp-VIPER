@@ -11,9 +11,12 @@ protocol AnyInteractor {
     var presenter: AnyPresenter? { get set }
     
     func getUsers()
+//    func getImages(from url: URL?, for indexPath: IndexPath) -> Data?
 }
 
 class UserInteractor: AnyInteractor {
+
+    
     var presenter: AnyPresenter?
     
     func getUsers() {
@@ -30,6 +33,7 @@ class UserInteractor: AnyInteractor {
             do {
                 let entities = try JSONDecoder().decode(Response.self, from: data)
                 self?.presenter?.interactorDidFetchUsers(with: .success(entities.articles))
+//                self?.presenter?.interactorDidFetchImage(with: data)
             } catch {
                 self?.presenter?.interactorDidFetchUsers(with: .failure(error))
             }
@@ -37,5 +41,13 @@ class UserInteractor: AnyInteractor {
         }
         task.resume()
     }
+    
+//    func getImages(from url: URL?, for indexPath: IndexPath) -> Data? {
+//        guard let url = url else { return nil }
+//        guard let imageData = try? Data(contentsOf: url) else { return nil }
+//        self.presenter?.interactorDidFetchImage(with: imageData, for: indexPath)
+//        return imageData
+//    }
+
     
 }
