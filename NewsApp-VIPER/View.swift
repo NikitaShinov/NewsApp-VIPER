@@ -8,6 +8,7 @@
 import Foundation
 
 import UIKit
+import SafariServices
 
 protocol AnyView {
     var presenter: AnyPresenter? { get set }
@@ -35,7 +36,7 @@ class UserViewController: UIViewController, AnyView, UITableViewDelegate, UITabl
         return label
     }()
     
-    var users: [Article] = []
+    var news: [Article] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,10 +54,10 @@ class UserViewController: UIViewController, AnyView, UITableViewDelegate, UITabl
         label.center = view.center
     }
     
-    func update(with users: [Article]) {
+    func update(with news: [Article]) {
         print ("Got users")
         DispatchQueue.main.async {
-            self.users = users
+            self.news = news
             self.tableView.reloadData()
             self.tableView.isHidden = false
         }
@@ -64,7 +65,7 @@ class UserViewController: UIViewController, AnyView, UITableViewDelegate, UITabl
     func update(with error: String) {
         print (error)
         DispatchQueue.main.async {
-            self.users = []
+            self.news = []
             self.label.text = error
             self.tableView.isHidden = true
             self.label.isHidden = false
@@ -72,7 +73,7 @@ class UserViewController: UIViewController, AnyView, UITableViewDelegate, UITabl
     }
     //MARK: - TableView
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        users.count
+        news.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -81,17 +82,29 @@ class UserViewController: UIViewController, AnyView, UITableViewDelegate, UITabl
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsTableViewCell.identifier, for: indexPath) as? NewsTableViewCell else { fatalError()}
-        cell.title.text = users[indexPath.row].title
-        cell.subtitle.text = users[indexPath.row].description
-        if let image = getImage(from: users[indexPath.row].urlToImage) {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsTableViewCell.identifier, for: indexPath) as? NewsTableViewCell else { return UITableViewCell() }
+        cell.title.text = news[indexPath.row].title
+        cell.subtitle.text = news[indexPath.row].description
+        if let image = getImage(from: news[indexPath.row].urlToImage) {
             cell.newsImage.image = UIImage(data: image)
         }
-        cell.counterLabel.text = (String(describing: users[indexPath.row].countOfViews))
+        cell.counterLabel.text = (String(describing: news[indexPath.row].countOfViews))
         
         
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let item = news[indexPath.row]
+        if let url = item.url {
+            let config = SFSafariViewController.Configuration()
+            guard let url = URL(string: url) else { return }
+            let safariVC = SFSafariViewController(url: url, configuration: config)
+            safariVC.modalPresentationStyle = .automatic
+            present(safariVC, animated: true, completion: nil)
+        }
     }
 }
 

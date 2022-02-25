@@ -17,7 +17,6 @@ protocol AnyPresenter {
     var view: AnyView? { get set }
     
     func interactorDidFetchUsers(with result: Result<[Article], Error>)
-//    func interactorDidFetchImage(with data: Data?, for indexPath: IndexPath)
 }
 
 class UserPresenter: AnyPresenter {
@@ -30,7 +29,7 @@ class UserPresenter: AnyPresenter {
     
     var interactor: AnyInteractor? {
         didSet {
-            interactor?.getUsers()
+            interactor?.getNews()
         }
     }
     
@@ -38,15 +37,10 @@ class UserPresenter: AnyPresenter {
 
     func interactorDidFetchUsers(with result: Result<[Article], Error>) {
         switch result {
-        case .success(let users):
-            view?.update(with: users)
+        case .success(let news):
+            view?.update(with: news)
         case .failure:
             view?.update(with: "Something went wrong")
         }
     }
-    
-//    func interactorDidFetchImage(with data: Data?, for indexPath: IndexPath) {
-//        guard let data = data else { return }
-//
-//    }
 }
