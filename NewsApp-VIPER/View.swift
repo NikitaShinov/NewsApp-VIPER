@@ -85,12 +85,16 @@ class UserViewController: UIViewController, AnyView, UITableViewDelegate, UITabl
         guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsTableViewCell.identifier, for: indexPath) as? NewsTableViewCell else { return UITableViewCell() }
         cell.title.text = news[indexPath.row].title
         cell.subtitle.text = news[indexPath.row].description
-        if let image = getImage(from: news[indexPath.row].urlToImage) {
-            cell.newsImage.image = UIImage(data: image)
+        
+        let queue = DispatchQueue.global(qos: .utility)
+        queue.async {
+            if let image = self.getImage(from: self.news[indexPath.row].urlToImage) {
+                DispatchQueue.main.async {
+                    cell.newsImage.image = UIImage(data: image)
+                }
+            }
         }
         cell.counterLabel.text = (String(describing: news[indexPath.row].countOfViews))
-        
-        
         
         return cell
     }

@@ -21,10 +21,6 @@ protocol AnyPresenter {
 
 class UserPresenter: AnyPresenter {
     
-    
-    
-    
-    
     var router: AnyRouter?
     
     var interactor: AnyInteractor? {
